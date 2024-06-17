@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>YouTube Comments Analyzer</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <!-- Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Custom CSS -->
+    <style>
+        /* Your custom styles here */
+    </style>
+</head>
+
+<body>
+
+      <!-- Navigation Bar
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#result">Result</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#wordcloud">Wordcloud</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#visualization">Visualization</a>
+                </li>
+            </ul>
+        </div>
+    </nav> -->
+
+
+    <div class="scroll-up-btn">
+        <i class="fas fa-angle-up"></i>
+    </div>
+    <nav class="navbar">
+        <div class="max-width">
+            <div class="logo"><a href="#">Portfo<span>lio.</span></a></div>
+            <ul class="menu">
+                <li><a href="#home" class="menu-btn">Home</a></li>
+                <li><a href="#worldcloud" class="menu-btn">About</a></li>
+                <li><a href="#visualization" class="menu-btn">Services</a></li>
+                
+            </ul>
+            <div class="menu-btn">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+
+
+
+
+    <!-- Home Section -->
+    <section class="home" id="home">
+    <div class="container-fluid">
+        <!-- Content from result.html -->
+        <div>
+            <h1 style="text-align: center;padding-top: 15px;padding-bottom: 15px;color:whitesmoke;font-size:44px;">Youtube
+                Video Comments Sentiment Analyzer</h1>
+        </div>
+
+        <div style="text-align: center;width: 77%;margin: 0 auto;">
+            <h2 style='background-color: antiquewhite;
+            font-size: 29px;
+            border-radius: 1.25rem;
+            padding: 10px;'><b>Following are the top {{ n }} comments on the Video...</b></h2>
+        </div>
+
+        <div class='row'>
+            <div class='col-md-4'
+                style='text-align: center;width: 57%;margin: 0 auto;border-radius: 2.25rem;margin-top: 30px;'>
+                <p
+                    style='padding-top: 5px;padding-bottom: 5px;border-radius: 1.25rem;width: 70%;background-color: palegreen;font-weight: bold;margin: 0 auto;'>
+                    POSITIVE REVIEWS -->{{np}}/{{n}}</p>
+            </div>
+
+            <div class='col-md-4'
+                style='text-align: center;width: 57%;margin: 0 auto;border-radius: 2.25rem;margin-top: 30px;'>
+                <p
+                    style="padding-top: 5px;padding-bottom: 5px;width: 70%;background-color: grey;font-weight: bold;margin: 0 auto;border-radius: 1.25rem;">
+                    NEUTRAL REVIEWS --> {{nne}}/{{n}}</p>
+            </div>
+
+            <div class='col-md-4'
+                style='text-align: center;width: 57%;margin: 0 auto;border-radius: 2.25rem;margin-top: 30px;'>
+                <p
+                    style="padding-top: 5px;padding-bottom: 5px;width: 70%;background-color: indianred;font-weight: bold;margin: 0 auto;border-radius: 1.25rem;">
+                    NEGATIVE REVIEWS --> {{nn}}/{{n}}</p>
+            </div>
+        </div>
+
+        <!-- Cards for comments -->
+        {% for obj in dic %}
+        <div class="card my-5 " style="max-width: 1000px;">
+            <div class="row" style='align-items:center'>
+                <div class="col-md-12">
+                    {% if obj['sent'] =='POSITIVE' %}
+                    <div class="card-body" style="background-color:palegreen;">
+                        <p class="card-text" style="font-size:20px;">{{ obj['org_comment'] }} </p>
+                    </div>
+                    {% endif %}
+
+                    {% if obj['sent'] =='NEUTRAL' %}
+                    <div class="card-body" style="background-color:grey;">
+                        <p class="card-text" style="font-size:20px;">{{ obj['org_comment'] }} </p>
+                    </div>
+                    {% endif %}
+
+                    {% if obj['sent'] =='NEGATIVE' %}
+                    <div class="card-body" style="background-color:indianred;">
+                        <p class="card-text" style="font-size:20px;">{{ obj['org_comment'] }} </p>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</section>
+
+
+    <!-- Wordcloud Section -->
+    <section class="worldcloud" id="worldcloud">
+    <div class="bg">
+        <!-- Content from wordwrap.html -->
+        <style>
+            * {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+
+            body,
+            html {
+                height: 100%;
+            }
+
+            .bg {
+                background-image: url("static/images/woc.png");
+                height: 100%;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: cover;
+            }
+        </style>
+
+
+        <div class="container-fluid">
+            <h1
+                style="text-align: center;padding-top: 15px;padding-bottom: 15px;color:whitesmoke;font-size:44px;">Youtube
+                Video Comments Sentiment Analyzer</h1>
+        </div>
+
+        <div style="text-align: center; width: 77%; margin: 0 auto">
+            <h2
+                style="background-color: antiquewhite;
+          font-size: 29px;
+          border-radius: 1.25rem;
+          padding: 10px;"
+            >
+                <b>Following are the top {{ n }} comments on the Video...</b>
+            </h2>
+        </div>
+    </div>
+
+</section>
+    <!-- Visualization Section -->
+    <section class="visualization" id="visualization">
+    <div class="container-fluid">
+        <!-- Content from visualization.html -->
+        <style>
+            * {
+                padding: 0;
+                margin: 0;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+
+            body {
+                background-image: url("static/back2.jpg");
+                background-size: cover;
+                font-family: sans-serif;
+                background-attachment: fixed;
+                margin-top: 40px;
+                height: 100vh;
+                padding: 0;
+                margin: 0;
+                backface-visibility: visible;
+            }
+
+            .card {
+                margin: 0 auto;
+                float: none;
+                margin-bottom: 10px;
+                border-radius: 2.25rem;
+                transition: 0.5s ease;
+                cursor: pointer;
+            }
+
+            .card:hover {
+                transform: scale(1.1);
+                box-shadow: rgba(0, 0, 0, 0.6);
+            }
+
+            .checked {
+                color: orange;
+            }
+        </style>
+
+        <div>
+            <h1
+                style="text-align: center;padding-top: 15px;padding-bottom: 15px;color:whitesmoke;font-size:44px;">Youtube
+                Video Comments Sentiment Analyzer</h1>
+        </div>
+
+        <div style="text-align: center; width: 77%; margin: 0 auto">
+            <h2
+                style="background-color: antiquewhite;
+          font-size: 29px;
+          border-radius: 1.25rem;
+          padding: 10px;"
+            >
+                <b>Following are the top {{ n }} comments on the Video...</b>
+            </h2>
+        </div>
+
+        <h2 style="text-align: center; width: 35%; margin: 1% auto ;color: aliceblue;">Pie Chart</h2>
+
+        <!-- Add a canvas for the pie chart -->
+        <div style="text-align: center; width: 35%; margin: 0 auto">
+            <canvas id="pieChart"></canvas>
+        </div>
+
+        <!-- Add a canvas for the bar graph -->
+        <div style="text-align: center;width: 45%; margin: 0 auto">
+            <h2 style="color: aliceblue;">Bar Graph</h2>
+            <canvas id="barChart"></canvas>
+        </div>
+    </div>
+
+    </section>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery, Popper.js, Bootstrap JS, Chart.js -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom JavaScript -->
+    <script>
+        // JavaScript code if needed
+    </script>
+
+    <!-- JavaScript for Pie Chart -->
+    <script>
+        var data = {
+            labels: ['Positive', 'Neutral', 'Negative'],
+            datasets: [{
+                data: [{{ np }}, {{ nne }}, {{ nn }}],
+                backgroundColor: ['palegreen', 'grey', 'indianred']
+            }]
+        };
+
+        var ctx = document.getElementById('pieChart').getContext('2d');
+
+        var pieChart = new Chart(ctx, {
+            type: 'pie',
+            data: data
+        });
+    </script>
+
+    <!-- JavaScript for Bar Graph -->
+    <script>
+        var dataBar = {
+            labels: ['Positive', 'Neutral', 'Negative'],
+            datasets: [{
+                label: 'Sentiment Analysis',
+                data: [{{ np }}, {{ nne }}, {{ nn }}],
+                backgroundColor: ['palegreen', 'grey', 'indianred'],
+                borderWidth: 1
+            }]
+        };
+
+        var ctxBar = document.getElementById('barChart').getContext('2d');
+
+        var barChart = new Chart(ctxBar, {
+            type: 'bar',
+            data: dataBar,
+            options: {
+                scales: {
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Sentiment'
+                        }
+                    },
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Count'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>

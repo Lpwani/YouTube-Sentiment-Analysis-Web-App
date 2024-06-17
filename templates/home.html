@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouTube Comment Sentiment Analysis</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* Add custom styles here */
+      body {
+        background-color: #f5f5f5; /* Light background */
+        color: #333; /* Dark text */
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        padding-top: 50px;
+        padding-bottom: 50px;
+        position: relative;
+      }
+
+      .project-title {
+        text-align: center;
+        margin-bottom: 40px;
+        font-size: 36px;
+        font-weight: bold;
+        color: #ff5722;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        animation: titleAnimation 2s infinite alternate;
+      }
+
+      @keyframes titleAnimation {
+        0% {
+          transform: scale(1);
+        }
+        100% {
+          transform: scale(1.05);
+        }
+      }
+
+      .split-screen {
+        display: flex;
+        justify-content: space-between;
+        height: 80vh;
+        margin-top: 20px;
+      }
+
+      .split-left,
+      .split-right {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .split-left {
+        background-color: #fff; /* Light background */
+        padding: 50px;
+        border-right: 2px solid #ddd;
+        height: 100%;
+        margin-right: 20px; /* Added margin */
+        width: 70%;
+        color: #333; /* Dark text */
+      }
+
+      .split-right {
+        /* background-color: #ababab; */
+        background-color: #1917178c;
+         /* Dark background */
+        padding: 50px;
+        position: relative;
+        overflow: hidden;
+        border-radius: 10px;
+        width: 30%;
+        color: #fff; /* Light text */
+      }
+
+      .split-right::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("https://i.imgur.com/8QY7H9A.jpg");
+        background-size: cover;
+        filter: blur(10px);
+        z-index: -1;
+      }
+
+      .split-right .content-container {
+        z-index: 1;
+        position: relative;
+      }
+
+      .split-right h2,
+      .split-right p {
+        margin-bottom: 20px;
+      }
+
+      .split-right h2 {
+        font-size: 24px;
+        color: #ff5722;
+      }
+
+      .split-right p {
+        font-size: 16px;
+      }
+
+      .youtube-icon {
+        width: 100px;
+        height: 100px;
+        background-color: #ff0000;
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        position: relative;
+        animation: search 2s linear infinite;
+      }
+
+      .youtube-icon:hover {
+        animation-play-state: paused;
+        background-color: #ff6666;
+      }
+
+      @keyframes search {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-20px) rotate(-5deg);
+        }
+      }
+
+      .youtube-icon svg {
+        fill: #fff;
+        width: 50px;
+        height: 50px;
+      }
+
+      .split-left h2 {
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #333;
+      }
+
+      .split-left label {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .split-left input[type="url"],
+      .split-left input[type="email"] {
+        width: 100%;
+        margin-bottom: 20px;
+        padding: 15px;
+        border: 2px solid #ddd;
+        border-radius: 10px;
+        background-color: #f5f5f5; /* Light background */
+        color: #333; /* Dark text */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .split-left input[type="url"]::placeholder,
+      .split-left input[type="email"]::placeholder {
+        color: rgba(0, 0, 0, 0.5);
+      }
+
+      .split-left button[type="submit"] {
+        width: 100%;
+        padding: 15px;
+        border: none;
+        border-radius: 10px;
+        background-color: #ff5722;
+        color: #fff;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .split-left button[type="submit"]:hover {
+        background-color: #ff6d42;
+      }
+
+      .loader {
+        display: none;
+        top: 50%;
+        left: 50%;
+        position: absolute;
+        transform: translate(-50%, -50%);
+      }
+
+      .loading {
+        border: 5px solid #ccc;
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        border-top-color: #61f3c5;
+        border-left-color: #61f3c5;
+        animation: spin 1s infinite ease-in;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .split-left,
+        .split-right {
+          flex: none;
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="project-title">
+        <h1>YouTube Comment Sentiment Analysis</h1>
+      </div>
+      <div class="split-screen">
+        <!-- Left Half - Input Section -->
+        <div class="split-left">
+          <div class="card p-5" style="height: 100%; width: 100%">
+            <h2>Analyze YouTube Comments</h2>
+            <form action="results">
+              <div class="form-group">
+                <label for="youtubeUrl">YouTube URL:</label>
+                <input
+                  type="url"
+                  class="form-control"
+                  id="url"
+                  name="url"
+                  placeholder="Enter YouTube URL"
+                />
+              </div>
+              <div class="form-group">
+                <label for="email">Email:</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  name="email"
+                  placeholder="Enter your email"
+                />
+              </div>
+              <button type="submit" class="btn btn-primary" onclick="spinner()">
+                Analyze
+              </button>
+              <div class="loader">
+                <div class="loading"></div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Right Half - Project Information Section -->
+        <div class="split-right">
+          <div class="content container-">
+            <div class="youtube-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path
+                  d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
+                />
+              </svg>
+            </div>
+            <div class="text-container">
+              <h2>Revolutionize Your Content Strategy</h2>
+              <p>
+                Unlock the power of sentiment analysis to understand your
+                audience better and tailor your content strategy accordingly.
+              </p>
+              <a href="{{ url_for('analysis') }}" class="btn btn-light">Learn More</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      function spinner() {
+        document.querySelector(".loader").style.display = "block";
+      }
+    </script>
+  </body>
+</html>

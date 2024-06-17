@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Review Sentiments</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+      crossorigin="anonymous"
+    />
+    <!-- Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: #f0f0f0;
+        color: #333;
+        font-family: sans-serif;
+        margin-top: 40px;
+        height: 100vh;
+        padding: 0;
+        margin: 0;
+      }
+
+      .navbar {
+        background-color: #333;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.5);
+      }
+
+      .navbar-brand {
+        color: #ddd !important;
+        font-size: 24px;
+      }
+
+      .navbar-dark .navbar-toggler-icon {
+        background-color: #ddd;
+      }
+
+      .sentiment-block {
+        border: 2px solid;
+        border-radius: 25px;
+        padding: 20px;
+        margin-bottom: 30px;
+        height: 70vh;
+        overflow-y:auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      .sentiment-block::-webkit-scrollbar {
+        display: none; /* For Chrome, Safari, and Opera */
+      }
+
+      .sentiment-title {
+        font-size: 24px;
+        margin-bottom: 15px;
+        color: #555;
+      }
+
+      .comments-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .comment-item {
+        margin-bottom: 30px;
+      }
+
+      .card {
+        margin: 0 auto;
+        margin-bottom: 20px;
+        border-radius: 25px;
+        transition: 0.5s ease;
+        cursor: pointer;
+        background-color: #fff;
+        color: #333;
+        border: 2px solid #ccc;
+      }
+
+      .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .card-body {
+        border-radius: 25px;
+        padding: 20px;
+      }
+
+      .card-text {
+        font-size: 18px;
+      }
+
+      /* Light colors behind comments */
+      .positive-comment {
+        background-color: #eafce4; /* very light green */
+        border-color: #c3e6cb; /* green border */
+      }
+
+      .neutral-comment {
+        background-color: #f2f2f2; /* very light grey */
+        border-color: #d6d8db; /* grey border */
+      }
+
+      .negative-comment {
+        background-color: #fce8e6; /* very light red */
+        border-color: #f8d7da; /* red border */
+      }
+
+      /* Adjust width of sentiment blocks */
+      .sentiment-block {
+        width: 90%;
+        margin: 0 auto;
+      }
+
+      .emoji
+      {
+          /* padding:20px */
+   
+           font-size: 50px;
+           text-align: center; 
+
+           
+      }
+      .num_comment{
+
+          text-align: center;
+
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+      <a class="navbar-brand" href="/">YouTube Sentiment Analyzer</a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/wc">Wordcloud</a>
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link"
+              href="{{ url_for('visualization') }}"
+              >Visualization</a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="mt-4">
+      <div class="row">
+        <div class="col-md-12">
+          <h2 style="text-align: center; margin-bottom: 30px; color: #555">
+            Following are the top {{ n }} comments on the Video...
+          </h2>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="sentiment-block">
+            <h2 class="sentiment-title">
+               <div class="emoji">&#128077;&#x1F600;  </div > 
+                
+                <div class="num_comment">Positive Comments <br>({{ np }}/{{ n }})</div>  
+            </h2>
+            <!-- &#x1F600; -->
+            <ul class="comments-list">
+              {% for obj in dic %} {% if obj['sent'] == 'POSITIVE' %}
+              <li class="comment-item">
+                <div class="card positive-comment">
+                  <div class="card-body">
+                    <p class="card-text">{{ obj['org_comment'] }}</p>
+                  </div>
+                </div>
+              </li>
+              {% endif %} {% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="sentiment-block">
+            <h2 class="sentiment-title">
+                <div class="emoji">&#128528;</div>  <div class="num_comment">  Neutral Comments <br>({{ nne }}/{{ n }})</div>
+            </h2>
+            <ul class="comments-list">
+              {% for obj in dic %} {% if obj['sent'] == 'NEUTRAL' %}
+              <li class="comment-item">
+                <div class="card neutral-comment">
+                  <div class="card-body">
+                    <p class="card-text">{{ obj['org_comment'] }}</p>
+                  </div>
+                </div>
+              </li>
+              {% endif %} {% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="sentiment-block">
+            <h2 class="sentiment-title">
+               <div class="emoji">&#128078; &#x1F61E;</div>  <div class="num_comment">Negative Comments <br>({{ nn }}/{{ n }})</div>
+            </h2>
+            <ul class="comments-list">
+              {% for obj in dic %} {% if obj['sent'] == 'NEGATIVE' %}
+              <li class="comment-item">
+                <div class="card negative-comment">
+                  <div class="card-body">
+                    <p class="card-text">{{ obj['org_comment'] }}</p>
+                  </div>
+                </div>
+              </li>
+              {% endif %} {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script
+      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+      integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+      integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Template</title>
+</head>
+<body>
+    <h1>Youtube Video Comments Sentiment Analysis Result</h1>
+    <p>Number of comments analyzed: {{ result_data.n }}</p>
+    <p>Number of positive comments: {{ result_data.np }}</p>
+    <p>Number of neutral comments: {{ result_data.nne }}</p>
+    <p>Number of negative comments: {{ result_data.nn }}</p>
+    <h2>Comments:</h2>
+    <ul>
+        {% for comment in result_data.dic %}
+            <li>
+                <p>Sentiment: {{ comment.sent }}</p>
+                
+                <p>Original Comment: {{ comment.org_comment }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

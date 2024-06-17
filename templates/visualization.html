@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visualization</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      background-color: #f8f9fa;
+      color: #333;
+    }
+
+    .navbar {
+      background-color: #333;
+    }
+
+    .navbar-brand,
+    .navbar-nav .nav-link {
+      color: white !important;
+    }
+
+    .container {
+      margin-top: 20px;
+    }
+
+    .chart-container {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <a class="navbar-brand" href="{{ url_for('home') }}">Home</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/wc">Wordcloud</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('visualization') }}">Visualization</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+  <h1 style="text-align: center; padding-top: 15px; padding-bottom: 15px; color: #333; font-size: 44px;">
+    Youtube Video Comments Sentiment Analyzer
+  </h1>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="chart-container">
+        <h2>Pie Chart</h2>
+        <canvas id="pieChart" style="height: 300px; width: 300px;"></canvas>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="chart-container">
+        <h2>Bar Chart</h2>
+        <canvas id="barChart" style="height: 300px; width: 300px;"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="chart-container">
+        <h2>Doughnut Chart</h2>
+        <canvas id="donutChart" style="height: 300px; width: 300px;"></canvas>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="chart-container">
+        <h2>Radar Chart</h2>
+        <canvas id="radarChart" style="height: 300px; width: 300px;"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="chart-container">
+        <h2>Line Chart</h2>
+        <canvas id="lineChart" style="height: 300px; width: 300px;"></canvas>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="chart-container">
+        <h2>Polar Area Chart</h2>
+        <canvas id="polarAreaChart" style="height: 300px; width: 300px;"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- jQuery first, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        crossorigin="anonymous"></script>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Sample data for the pie chart
+  var dataPie = {
+    labels: ['Positive', 'Neutral', 'Negative'],
+    datasets: [{
+      data: [{{ np }}, {{ nne }}, {{ nn }}], // Replace with your actual data
+      backgroundColor: ['palegreen', 'grey', 'indianred']
+    }]
+  };
+
+  // Get the canvas element for the pie chart
+  var ctxPie = document.getElementById('pieChart').getContext('2d');
+
+  // Create the pie chart
+  var pieChart = new Chart(ctxPie, {
+    type: 'pie',
+    data: dataPie
+  });
+
+  // Sample data for the bar chart
+  var dataBar = {
+    labels: ['Positive', 'Neutral', 'Negative'],
+    datasets: [{
+      label: 'Sentiment Analysis',
+      data: [{{ np }}, {{ nne }}, {{ nn }}], // Replace with your actual data
+      backgroundColor: ['palegreen', 'grey', 'indianred'],
+      borderWidth: 1
+    }]
+  };
+
+  // Get the canvas element for the bar chart
+  var ctxBar = document.getElementById('barChart').getContext('2d');
+
+  // Create the bar chart
+  var barChart = new Chart(ctxBar, {
+    type: 'bar',
+    data: dataBar,
+    options: {
+      scales: {
+        x: {
+          display: true,
+          title: {
+            display: true,
+            text: 'Sentiment'
+          }
+        },
+        y: {
+          display: true,
+          title: {
+            display: true,
+            text: 'Count'
+          }
+        }
+      }
+    }
+  });
+
+  // Sample data for the doughnut chart
+  var dataDonut = {
+    labels: ['Positive', 'Neutral', 'Negative'],
+    datasets: [{
+      data: [{{ np }}, {{ nne }}, {{ nn }}], // Replace with your actual data
+      backgroundColor: ['palegreen', 'grey', 'indianred'],
+      borderWidth: 1
+    }]
+  };
+
+  // Get the canvas element for the doughnut chart
+  var ctxDonut = document.getElementById('donutChart').getContext('2d');
+
+  // Create the doughnut chart
+  var donutChart = new Chart(ctxDonut, {
+    type: 'doughnut',
+    data: dataDonut
+  });
+
+  // Sample data for the radar chart
+  var dataRadar = {
+    labels: ['Positive', 'Neutral', 'Negative'],
+    datasets: [{
+      label: 'Sentiment Analysis',
+      data: [{{ np }}, {{ nne }}, {{ nn }}], // Replace with your actual data
+      backgroundColor: 'rgba(54, 162, 235, 0.2)',
+      borderColor: 'rgba(54, 162, 235, 1)',
+      borderWidth: 1
+    }]
+  };
+
+  // Get the canvas element for the radar chart
+  var ctxRadar = document.getElementById('radarChart').getContext('2d');
+
+  // Create the radar chart
+  var radarChart = new Chart(ctxRadar, {
+    type: 'radar',
+    data: dataRadar,
+    options: {
+      scale: {
+        ticks: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  // Sample data for the line chart
+  var dataLine = {
+    labels: ['Positive', 'Neutral', 'Negative'],
+    datasets: [{
+      label: 'Sentiment Analysis',
+      data: [{{ np }}, {{ nne }}, {{ nn }}], // Replace with your actual data
+      backgroundColor: 'rgba(255, 99, 132, 0.2)',
+      borderColor: 'rgba(255, 99, 132, 1)',
+      borderWidth: 1
+    }]
+  };
+
+  // Get the canvas element for the line chart
+  var ctxLine = document.getElementById('lineChart').getContext('2d');
+
+  // Create the line chart
+  var lineChart = new Chart(ctxLine, {
+    type: 'line',
+    data: dataLine,
+    options: {
+      scales: {
+        x: {
+          display: true,
+          title: {
+            display: true,
+            text: 'Sentiment'
+          }
+        },
+        y: {
+          display: true,
+          title: {
+            display: true,
+            text: 'Count'
+          }
+        }
+      }
+    }
+  });
+
+  // Sample data for the polar area chart
+  var dataPolarArea = {
+    labels: ['Positive', 'Neutral', 'Negative'],
+    datasets: [{
+      label: 'Sentiment Analysis',
+      data: [{{ np }}, {{ nne }}, {{ nn }}], // Replace with your actual data
+      backgroundColor: ['palegreen', 'grey', 'indianred'],
+      borderWidth: 1
+    }]
+  };
+
+  // Get the canvas element for the polar area chart
+  var ctxPolarArea = document.getElementById('polarAreaChart').getContext('2d');
+
+  // Create the polar area chart
+  var polarAreaChart = new Chart(ctxPolarArea, {
+    type: 'polarArea',
+    data: dataPolarArea
+  });
+</script>
+</body>
+</html>
