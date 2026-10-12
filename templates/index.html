@@ -66,6 +66,7 @@
                       <h4 class="mt-1 mb-5 pb-1">YouTube Comment Analyzer</h4>
                     </div>
 
+                    {% if error %}<div class="alert alert-danger" role="alert">{{ error }}</div>{% endif %}
                     <form method="POST" action="{{ url_for('login') }}">
                       <p>Please login to your account</p>
 

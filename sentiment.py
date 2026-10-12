@@ -1,67 +1,70 @@
-# import nltk
-# import matplotlib.pyplot as plt
-# from nltk.corpus import stopwords
-# from nltk.sentiment.vader import SentimentIntensityAnalyzer
-# from nltk.stem import WordNetLemmatizer
-# from wordcloud import WordCloud, STOPWORDS
-# from utilities import CleanCache
+"""Three-class sentiment scoring using NLTK VADER with an offline fallback.
 
-# # nltk.download('vader_lexicon')
-# # nltk.download('stopwords')
-# # nltk.download('wordnet')
+VADER returns a compound polarity score in [-1, 1]. Scores >= 0.05 are
+Positive, <= -0.05 are Negative, and values in between are Neutral."""
+from __future__ import annotations
 
-# wnl = WordNetLemmatizer()
-# sia = SentimentIntensityAnalyzer()
-# stop_words = stopwords.words('english')
+import logging
+import re
 
-# # def clean(org_comments):
-# #     y = []
-# #     for x in org_comments:
-# #         x = x.split()
-# #         x = [i.lower().strip() for i in x]
-# #         x = [i for i in x if i not in stop_words]
-# #         x = [i for i in x if len(i) > 2]
-# #         x = [wnl.lemmatize(i) for i in x]
-# #         y.append(' '.join(x))
-# #     return y
+import nltk
+from nltk.sentiment import SentimentIntensityAnalyzer
 
-# # def create_wordcloud(clean_reviews):
-# #     for_wc = ' '.join(clean_reviews)
-# #     wcstops = set(STOPWORDS)
-# #     wc = WordCloud(width=1400, height=800, stopwords=wcstops, background_color='white').generate(for_wc)
-# #     plt.figure(figsize=(20, 10), facecolor='k', edgecolor='k')
-# #     plt.imshow(wc, interpolation='bicubic')
-# #     plt.axis('off')
-# #     plt.tight_layout()
-# #     CleanCache(directory='static/images')
-# #     plt.savefig('static/images/woc.png')
-# #     plt.close()
+LOGGER = logging.getLogger(__name__)
+_ANALYZER = None
 
-# def returnsentiment(x):
-#     score = sia.polarity_scores(x)['compound']
 
-#     if score > 0:
-#         sent = 'Positive'
-#     elif score == 0:
-#         sent = 'Negative'
-#     else:
-#         sent = 'Neutral'
-#     return score, sent
+def _load_analyzer():
+    try:
+        return SentimentIntensityAnalyzer()
+    except LookupError:
+        try:
+            if nltk.download("vader_lexicon", quiet=True):
+                return SentimentIntensityAnalyzer()
+        except Exception:
+            LOGGER.warning("Could not download the VADER lexicon; using the lightweight fallback scorer.")
+        LOGGER.warning("VADER lexicon is unavailable; using a lightweight fallback sentiment scorer.")
+        return None
 
-import torch
-from transformers import pipeline
 
-sia = pipeline("sentiment-analysis")
+_ANALYZER = _load_analyzer()
+_POSITIVE_WORDS = {
+    "amazing", "awesome", "best", "brilliant", "enjoy", "excellent",
+    "fantastic", "fun", "good", "great", "happy", "love", "loved",
+    "nice", "perfect", "thank", "thanks", "wonderful", "wow", "beautiful",
+}
+_NEGATIVE_WORDS = {
+    "awful", "bad", "boring", "disappointing", "hate", "hated", "horrible",
+    "poor", "terrible", "trash", "ugly", "worst", "wrong", "annoying",
+}
+_TOKEN_RE = re.compile(r"[a-zA-Z]+")
 
-def returnsentiment(x):
-    result = sia(x)[0]
-    score = result['score']
-    
-    if score > 0.75:
-        sent = 'Positive'
-    elif score < 0.6:
-        sent = 'Negative'
+
+def _fallback_compound(text: str) -> float:
+    tokens = [token.lower() for token in _TOKEN_RE.findall(text)]
+    if not tokens:
+        return 0.0
+    positive = sum(token in _POSITIVE_WORDS for token in tokens)
+    negative = sum(token in _NEGATIVE_WORDS for token in tokens)
+    polarity = positive - negative
+    if polarity == 0:
+        return 0.0
+    # Deliberately conservative fallback, not a replacement for VADER.
+    return max(-1.0, min(1.0, polarity / max(2.0, len(tokens) ** 0.5)))
+
+
+def returnsentiment(text: str) -> tuple[float, str]:
+    """Return (compound score, label) where label is Positive, Neutral or Negative."""
+    if not isinstance(text, str) or not text.strip():
+        return 0.0, "Neutral"
+    if _ANALYZER is not None:
+        compound = float(_ANALYZER.polarity_scores(text)["compound"])
     else:
-        sent = 'Neutral'
-    
-    return score, sent
+        compound = _fallback_compound(text)
+    if compound >= 0.05:
+        label = "Positive"
+    elif compound <= -0.05:
+        label = "Negative"
+    else:
+        label = "Neutral"
+    return compound, label

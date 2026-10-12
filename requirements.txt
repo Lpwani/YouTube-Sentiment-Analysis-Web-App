@@ -1,9 +1,8 @@
-beautifulsoup4==4.10.0
-Flask==2.1.0
-joblib==1.1.0
-matplotlib==3.4.3
-nltk==3.6.3
-numpy==1.21.2
-requests==2.26.0
-selenium==3.141.0
-wordcloud==1.8.1
+Flask==3.1.1
+Flask-Mail==0.10.0
+python-dotenv==1.0.1
+selenium==4.28.1
+webdriver-manager==4.0.2
+nltk==3.9.1
+matplotlib==3.10.1
+wordcloud==1.9.4

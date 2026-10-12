@@ -1,49 +1,32 @@
-# import nltk
-# import matplotlib.pyplot as plt
-# from nltk.corpus import stopwords
-# from nltk.sentiment.vader import SentimentIntensityAnalyzer
-# from nltk.stem import WordNetLemmatizer
-# from wordcloud import WordCloud, STOPWORDS
-# from utilities import CleanCache
+"""Lightweight text normalization for display and word-cloud generation.
 
-# nltk.download('vader_lexicon')
-# nltk.download('stopwords')
-# nltk.download('wordnet')
+Sentiment is scored on the original comments, so this preprocessing deliberately
+is not used as the input to sentiment classification (to preserve negations).
+"""
+from __future__ import annotations
 
-# wnl = WordNetLemmatizer()
-# sia = SentimentIntensityAnalyzer()
-# stop_words = stopwords.words('english')
+import re
 
-# def clean(org_comments):
-#     y = []
-#     for x in org_comments:
-#         x = x.split()
-#         x = [i.lower().strip() for i in x]
-#         x = [i for i in x if i not in stop_words]
-#         x = [i for i in x if len(i) > 2]
-#         x = [wnl.lemmatize(i) for i in x]
-#         y.append(' '.join(x))
-#     return y
+_TOKEN_RE = re.compile(r"[A-Za-z0-9']+")
+_STOP_WORDS = {
+    "a", "an", "and", "are", "as", "at", "be", "been", "but", "by", "for",
+    "from", "had", "has", "have", "he", "her", "here", "hers", "him", "his",
+    "how", "i", "if", "in", "into", "is", "it", "its", "me", "my", "of",
+    "on", "or", "our", "ours", "she", "so", "than", "that", "the", "their",
+    "them", "then", "there", "these", "they", "this", "those", "to", "too",
+    "us", "was", "we", "were", "what", "when", "where", "which", "who", "why",
+    "will", "with", "you", "your", "yours",
+}
 
 
-import nltk
-import pandas as pd
-from nltk.corpus import stopwords
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
-from nltk.stem import WordNetLemmatizer
-from nltk.tokenize import RegexpTokenizer
-from utilities import CleanCache
-
-nltk.download('vader_lexicon')
-nltk.download('stopwords')
-nltk.download('wordnet')
-
-wnl = WordNetLemmatizer()
-sia = SentimentIntensityAnalyzer()
-stop_words = set(stopwords.words('english'))
-tokenizer = RegexpTokenizer(r'\w+')
-
-def clean(org_comments):
-    comments_series = pd.Series(org_comments)
-    cleaned_comments = comments_series.apply(lambda x: ' '.join([wnl.lemmatize(token) for token in tokenizer.tokenize(x.lower()) if token not in stop_words and len(token) > 2]))
-    return cleaned_comments.tolist()
+def clean(org_comments: list[str]) -> list[str]:
+    """Normalize a list of comments while preserving list order and length."""
+    cleaned: list[str] = []
+    for comment in org_comments:
+        if not isinstance(comment, str):
+            cleaned.append("")
+            continue
+        tokens = [token.lower() for token in _TOKEN_RE.findall(comment)]
+        tokens = [token for token in tokens if len(token) > 2 and token not in _STOP_WORDS]
+        cleaned.append(" ".join(tokens))
+    return cleaned
