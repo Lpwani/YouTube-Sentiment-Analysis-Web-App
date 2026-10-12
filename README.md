@@ -16,6 +16,7 @@ This final year group project involved the development of a web application desi
 - **Beautiful Soup**
 - **Flask**
 - **MongoDB**
+- **SQLite**
 
 ## Installation
 1. Clone the repository:
@@ -41,6 +42,6 @@ This final year group project involved the development of a web application desi
    
 ## Contact
 - Name: Lokesh Pradeep Wani
-- Email: lokeshwani03.scoe.it@gmail.com
+- Email: lokeshwani7303@gmail.com
 - LinkedIn: (https://www.linkedin.com/in/lokeshwani)
 - GitHub: (https://github.com/Lpwani)
